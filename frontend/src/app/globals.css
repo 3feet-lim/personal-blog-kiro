@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+/* 통합 블로그 - 라이트 모드 전용, 화이트 톤 기반 커스텀 테마 */
+@theme {
+  /* 기본 색상 */
+  --color-primary: #3B82F6;
+  --color-primary-hover: #2563EB;
+
+  /* 배경 색상 */
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F9FAFB;
+
+  /* 텍스트 색상 */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+
+  /* 보더 색상 */
+  --color-border: #E5E7EB;
+}
+
+/* 기본 바디 스타일 */
+body {
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
