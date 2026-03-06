@@ -141,58 +141,102 @@
     - **Property 13: 페이지네이션 일관성**
     - **Validates: Requirements 2.1-2.7, 4.1-4.6**
 
-- [ ] 9. 이미지 모듈 구현
-  - [ ] 9.1 Image 모델 및 스키마 구현
+- [ ] 9. 태그 모듈 구현
+  - [ ] 9.1 Tag, PostTag 모델 및 스키마 구현
+    - `app/tags/__init__.py` - 태그 모듈 초기화
+    - `app/tags/models.py` - Tag, PostTag SQLAlchemy 모델 (다대다 관계)
+    - `app/tags/schemas.py` - TagCreate, TagUpdate, TagResponse 스키마
+    - Alembic 마이그레이션 생성 (tags, post_tags 테이블)
+    - _Requirements: 8.1, 8.4, 8.7, 8.8_
+
+  - [ ] 9.2 태그 서비스 구현
+    - `app/tags/service.py` - TagService 클래스
+    - 태그 CRUD (생성, 수정, 삭제)
+    - 태그 이름으로부터 슬러그 자동 생성
+    - 태그 이름 고유성 검증 (중복 시 DuplicateError 반환)
+    - 포스트-태그 다대다 관계 관리 (할당, 제거)
+    - 태그별 포스트 필터링 조회
+    - `app/tags/repository.py` - TagRepository 클래스
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8, 8.9_
+
+  - [ ] 9.3 태그 라우터 구현
+    - `app/tags/router.py` - 태그 CRUD 엔드포인트
+    - `POST /api/v1/tags` - 태그 생성 (ADMIN)
+    - `PUT /api/v1/tags/{id}` - 태그 수정 (ADMIN)
+    - `DELETE /api/v1/tags/{id}` - 태그 삭제 (ADMIN)
+    - `GET /api/v1/tags` - 태그 목록 조회
+    - `GET /api/v1/tags/{slug}/posts` - 태그별 포스트 필터링 (선택적 인증)
+    - `POST /api/v1/posts/{id}/tags` - 포스트에 태그 할당 (ADMIN)
+    - `DELETE /api/v1/posts/{id}/tags/{tag_id}` - 포스트에서 태그 제거 (ADMIN)
+    - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6_
+
+  - [ ]* 9.4 태그 속성 테스트 작성
+    - **Property 20: 태그 CRUD 라운드트립**
+    - 태그 생성 후 조회 시 동일한 이름과 슬러그가 반환되어야 하고, 수정 후 변경 내용이 반영되어야 하며, 삭제 후 포스트-태그 관계도 제거되어야 한다
+    - **Validates: Requirements 8.1, 8.2, 8.3**
+
+  - [ ]* 9.5 태그 슬러그 고유성 속성 테스트 작성
+    - **Property 21: 태그 슬러그 고유성 및 이름 고유성**
+    - 동일한 태그 이름으로 생성 시 중복 오류를 반환해야 하고, 생성된 슬러그는 URL-safe 문자만 포함해야 한다
+    - **Validates: Requirements 8.7, 8.8, 8.9**
+
+  - [ ]* 9.6 포스트-태그 다대다 관계 속성 테스트 작성
+    - **Property 22: 포스트-태그 다대다 관계 일관성**
+    - 포스트에 태그 할당 후 해당 태그로 필터링 시 포스트가 포함되어야 하고, 태그 제거 후 필터링 시 포스트가 제외되어야 한다
+    - **Validates: Requirements 8.4, 8.5, 8.6**
+
+- [ ] 10. 이미지 모듈 구현
+  - [ ] 10.1 Image 모델 및 스키마 구현
     - `app/images/models.py` - Image SQLAlchemy 모델
     - `app/images/schemas.py` - ImageResponse, ImageUploadResponse 스키마
     - Alembic 마이그레이션 생성
     - _Requirements: 5.4_
 
-  - [ ] 9.2 이미지 서비스 구현
+  - [ ] 10.2 이미지 서비스 구현
     - `app/images/service.py` - ImageService 클래스
     - MinIO 클라이언트 설정
     - 이미지 업로드, 리사이징, 썸네일 생성 (Pillow)
     - 이미지 형식 검증
     - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7_
 
-  - [ ] 9.3 이미지 라우터 구현
+  - [ ] 10.3 이미지 라우터 구현
     - `app/images/router.py` - 업로드, 조회, 삭제 엔드포인트
     - _Requirements: 5.1, 5.5_
 
-  - [ ]* 9.4 이미지 속성 테스트 작성
+  - [ ]* 10.4 이미지 속성 테스트 작성
     - **Property 14: 이미지 업로드 라운드트립**
     - **Property 15: 이미지 리사이징 제약**
     - **Property 16: 이미지 형식 검증**
     - **Validates: Requirements 5.1-5.7**
 
-- [ ] 10. FastAPI 앱 통합
-  - [ ] 10.1 메인 앱 설정
-    - `app/main.py` - FastAPI 앱 생성, 라우터 등록, CORS 설정
+- [ ] 11. FastAPI 앱 통합
+  - [ ] 11.1 메인 앱 설정
+    - `app/main.py` - FastAPI 앱 생성, 라우터 등록 (태그 라우터 포함), CORS 설정
     - OpenAPI 문서 설정
     - _Requirements: 7.4_
 
-  - [ ] 10.2 Alembic 설정 및 초기 마이그레이션
+  - [ ] 11.2 Alembic 설정 및 초기 마이그레이션
     - `alembic.ini` 설정
-    - 전체 마이그레이션 스크립트 생성
-    - _Requirements: 2.5, 3.6_
+    - 전체 마이그레이션 스크립트 생성 (tags, post_tags 테이블 포함)
+    - _Requirements: 2.5, 3.6, 8.8_
 
-- [ ] 11. 체크포인트 - 백엔드 전체 검증
+- [ ] 12. 체크포인트 - 백엔드 전체 검증
   - 사용자에게 전체 테스트 실행 요청 (`pytest tests/ -v`)
   - 테스트 결과 확인 후 필요시 수정
 
-- [ ] 12. 프론트엔드 공통 모듈 구현
-  - [ ] 12.1 API 클라이언트 및 타입 정의
+- [ ] 13. 프론트엔드 공통 모듈 구현
+  - [ ] 13.1 API 클라이언트 및 타입 정의
     - `src/lib/api.ts` - Axios 기반 API 클라이언트
-    - `src/types/index.ts` - TypeScript 타입 정의
+    - `src/types/index.ts` - TypeScript 타입 정의 (Tag, PostTag 타입 포함)
     - _Requirements: 7.4_
 
-  - [ ] 12.2 인증 유틸리티 및 훅 구현
+  - [ ] 13.2 인증 유틸리티 및 훅 구현
     - `src/lib/auth.ts` - 토큰 저장/조회 유틸리티
     - `src/hooks/useAuth.ts` - 인증 상태 관리 훅
     - _Requirements: 1.1, 1.3, 1.5_
 
-- [ ] 13. 프론트엔드 첫 페이지 구현 (레이아웃 + 홈 + 블로그 목록)
-  - [ ] 13.1 접이식 사이드바 레이아웃 구현
+- [ ] 14. 프론트엔드 첫 페이지 구현 (레이아웃 + 홈 + 블로그 목록)
+  - [ ] 14.1 접이식 사이드바 레이아웃 구현
     - `src/components/layout/Sidebar.tsx` - 접이식 사이드바 (카테고리 트리, 네비게이션)
     - `src/components/layout/Header.tsx` - 헤더 (로고, 햄버거 메뉴, 로그인 버튼)
     - `src/components/layout/Footer.tsx` - 푸터
@@ -201,55 +245,66 @@
     - Tailwind CSS 화이트 톤 기반 스타일링
     - _Requirements: 4.4, 7.4_
 
-  - [ ] 13.2 홈페이지 구현
+  - [ ] 14.2 홈페이지 구현
     - `src/app/page.tsx` - 최신 포스트 미리보기, 카테고리 소개
     - 테크 블로그와 가족 영역 동일한 카드 스타일 적용
     - _Requirements: 4.1, 4.6_
 
-  - [ ] 13.3 블로그 목록 페이지 구현
+  - [ ] 14.3 블로그 목록 페이지 구현
     - `src/app/(public)/blog/page.tsx` - 포스트 목록 (페이지네이션 포함)
     - `src/components/posts/PostCard.tsx` - 포스트 카드 컴포넌트
     - _Requirements: 4.1, 4.4, 4.6_
 
-- [ ] 14. 디자인 리뷰 체크포인트
+  - [ ] 14.4 에러 및 로딩 상태 UI 구현
+    - `src/app/not-found.tsx` - 404 페이지 (홈으로 돌아가기 링크 포함)
+    - `src/app/error.tsx` - 에러 바운더리 (`'use client'` 컴포넌트, 다시 시도하기 버튼, `reset()` 호출로 현재 경로 재로드)
+    - `src/app/(public)/blog/loading.tsx` - 포스트 목록 스켈레톤 UI (카드 형태 플레이스홀더)
+    - `src/app/(public)/blog/[slug]/loading.tsx` - 포스트 상세 스켈레톤 UI (제목, 메타데이터, 본문 플레이스홀더)
+    - Tailwind CSS `animate-pulse` 활용한 스켈레톤 애니메이션
+    - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5, 9.6, 9.7_
+
+- [ ] 15. 디자인 리뷰 체크포인트
   - 사용자가 첫 페이지(레이아웃, 홈, 블로그 목록)의 디자인을 확인
   - 사이드바 동작, 색상, 레이아웃, 반응형 동작 등 피드백 수집
+  - 에러/로딩 상태 UI 확인 (404 페이지, 에러 페이지, 스켈레톤 UI)
   - 피드백 반영 후 디자인 확정
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 15. 나머지 프론트엔드 페이지 구현
-  - [ ] 15.1 로그인 페이지 구현
+- [ ] 16. 나머지 프론트엔드 페이지 구현
+  - [ ] 16.1 로그인 페이지 구현
     - `src/app/login/page.tsx` - 로그인 폼 (화이트 톤 스타일)
     - _Requirements: 1.1, 1.2_
 
-  - [ ] 15.2 비공개 가족 페이지 구현
+  - [ ] 16.2 비공개 가족 페이지 구현
     - `src/app/(private)/family/page.tsx` - 가족 사진 목록 (이미지 그리드 레이아웃)
     - `src/app/(private)/family/[slug]/page.tsx` - 가족 사진 상세
     - 인증 미들웨어 적용
     - 테크 블로그와 동일한 디자인 분위기 유지
     - _Requirements: 4.2, 4.3_
 
-  - [ ] 15.3 관리자 페이지 구현
+  - [ ] 16.3 관리자 페이지 구현
     - `src/app/admin/layout.tsx` - 관리자 레이아웃
     - `src/app/admin/posts/` - 포스트 관리 (목록, 생성, 수정)
     - `src/app/admin/categories/` - 카테고리 관리
+    - `src/app/admin/tags/` - 태그 관리 (목록, 생성, 수정, 삭제)
     - `src/app/admin/users/` - 사용자 관리
-    - _Requirements: 2.1, 2.2, 2.3, 3.1, 3.4, 6.1, 6.3, 6.4_
+    - _Requirements: 2.1, 2.2, 2.3, 3.1, 3.4, 6.1, 6.3, 6.4, 8.1, 8.2, 8.3_
 
-  - [ ] 15.4 마크다운 렌더러 구현
+  - [ ] 16.4 마크다운 렌더러 구현
     - `src/components/posts/MarkdownRenderer.tsx` - 마크다운 렌더링
     - 코드 하이라이팅 지원
-    - `src/app/(public)/blog/[slug]/page.tsx` - 포스트 상세 페이지
+    - `src/app/(public)/blog/[slug]/page.tsx` - 포스트 상세 페이지 (태그 표시 포함)
     - `src/app/(public)/category/[slug]/page.tsx` - 카테고리별 포스트 페이지
-    - _Requirements: 2.4, 4.5_
+    - `src/app/(public)/tag/[slug]/page.tsx` - 태그별 포스트 페이지
+    - _Requirements: 2.4, 4.5, 8.6_
 
-  - [ ] 15.5 이미지 업로드 컴포넌트 구현
+  - [ ] 16.5 이미지 업로드 컴포넌트 구현
     - `src/components/posts/ImageUploader.tsx` - 드래그앤드롭 이미지 업로드
     - 업로드 진행률 표시
     - 관리자 포스트 작성 페이지에 통합
     - _Requirements: 5.1_
 
-- [ ] 16. 최종 체크포인트
+- [ ] 17. 최종 체크포인트
   - 사용자에게 전체 통합 테스트 실행 요청
   - 백엔드: `pytest tests/ -v`
   - 프론트엔드: `npm run build && npm run lint`
@@ -264,4 +319,4 @@
 - 속성 테스트는 Hypothesis 라이브러리를 사용하여 최소 100회 반복 실행합니다
 - **테스트 실행은 사용자에게 요청합니다** (Docker 환경 필요)
 - 테스트 결과를 받은 후 필요한 수정 작업을 진행합니다
-- **디자인 리뷰 체크포인트(14번)** 에서 사용자 피드백을 반영한 후 나머지 페이지를 구현합니다
+- **디자인 리뷰 체크포인트(15번)** 에서 사용자 피드백을 반영한 후 나머지 페이지를 구현합니다

@@ -28,6 +28,16 @@
 
 - **Visibility**: 포스트의 공개 범위 (PUBLIC 또는 PRIVATE)
 
+- **Tag_Service**: 태그 생성, 수정, 삭제 및 포스트-태그 관계 관리를 담당하는 서비스
+
+- **Tag**: 포스트에 할당할 수 있는 횡단적 분류 키워드 (예: "Python", "Docker", "React")
+
+- **Frontend_App**: Next.js 기반 프론트엔드 애플리케이션
+
+- **Error_Boundary**: 예기치 않은 에러 발생 시 사용자 친화적 에러 페이지를 표시하는 React 컴포넌트
+
+- **Skeleton_UI**: 콘텐츠 로딩 중 레이아웃 형태의 플레이스홀더를 표시하는 UI 컴포넌트
+
 ## 요구사항
 
 ### 요구사항 1: 사용자 인증
@@ -157,3 +167,48 @@
 4. THE Blog_System SHALL JSON 형식으로 응답한다
 
 5. IF 요청 데이터가 유효하지 않으면 THEN Blog_System SHALL 상세한 유효성 검사 오류 메시지를 반환한다
+
+
+### 요구사항 8: 태그 관리
+
+**사용자 스토리:** 관리자로서, 포스트에 태그를 할당하여 카테고리와 별도로 횡단적 분류를 할 수 있기를 원합니다.
+
+#### 인수 조건
+
+1. WHEN 관리자가 태그 생성 요청을 보내면 THEN Tag_Service SHALL 새 태그를 생성한다
+
+2. WHEN 관리자가 태그 수정 요청을 보내면 THEN Tag_Service SHALL 해당 태그의 이름을 업데이트한다
+
+3. WHEN 관리자가 태그 삭제 요청을 보내면 THEN Tag_Service SHALL 해당 태그를 삭제하고 포스트-태그 관계를 제거한다
+
+4. WHEN 관리자가 포스트에 태그 할당 요청을 보내면 THEN Tag_Service SHALL 해당 포스트와 태그의 다대다 관계를 생성한다
+
+5. WHEN 관리자가 포스트에서 태그 제거 요청을 보내면 THEN Tag_Service SHALL 해당 포스트-태그 관계를 삭제한다
+
+6. WHEN 사용자가 특정 태그로 포스트 목록을 요청하면 THEN Tag_Service SHALL 해당 태그가 할당된 포스트만 필터링하여 반환한다
+
+7. THE Tag_Service SHALL 태그 이름의 고유성을 보장한다
+
+8. WHEN 태그가 생성되면 THEN Tag_Service SHALL 태그 이름으로부터 고유한 슬러그를 자동 생성한다
+
+9. IF 동일한 태그 이름이 이미 존재하면 THEN Tag_Service SHALL 중복 오류를 반환한다
+
+### 요구사항 9: 에러 및 로딩 상태 UI
+
+**사용자 스토리:** 사용자로서, 에러 발생 시 친화적인 안내 페이지를 보고, 콘텐츠 로딩 중 시각적 피드백을 받을 수 있기를 원합니다.
+
+#### 인수 조건
+
+1. WHEN 사용자가 존재하지 않는 페이지에 접근하면 THEN Frontend_App SHALL not-found.tsx를 통해 404 안내 페이지를 표시한다
+
+2. WHEN 예기치 않은 런타임 에러가 발생하면 THEN Frontend_App SHALL error.tsx의 Error_Boundary를 통해 사용자 친화적 에러 페이지를 표시한다
+
+3. WHILE 페이지 콘텐츠가 로딩 중이면 THEN Frontend_App SHALL loading.tsx를 통해 Skeleton_UI를 표시한다
+
+4. THE Frontend_App SHALL 404 페이지에 홈으로 돌아가기 링크를 포함한다
+
+5. THE Frontend_App SHALL 에러 페이지에 다시 시도하기 버튼을 포함한다
+
+6. WHEN 에러 페이지의 다시 시도하기 버튼이 클릭되면 THEN Frontend_App SHALL 현재 경로를 다시 로드한다
+
+7. THE Frontend_App SHALL 포스트 목록 페이지와 포스트 상세 페이지에 각각 적합한 Skeleton_UI를 제공한다
