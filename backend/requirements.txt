@@ -1,6 +1,7 @@
 # 웹 프레임워크
 fastapi==0.115.6
 uvicorn[standard]==0.34.0
+python-multipart==0.0.18
 
 # 데이터베이스
 sqlalchemy[asyncio]==2.0.36
