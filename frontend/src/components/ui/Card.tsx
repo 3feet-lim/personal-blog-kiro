@@ -4,7 +4,7 @@ import { type HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 /** 재사용 가능한 카드 컴포넌트 */

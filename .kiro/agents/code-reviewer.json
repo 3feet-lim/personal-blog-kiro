@@ -1,0 +1,6 @@
+{
+  "name": "code-reviewer",
+  "description": "코드 리뷰 에이전트 - 보안, 신뢰성, 가독성 관점에서 코드를 검토하고 Go/No-Go 판정을 제공합니다.",
+  "prompt": "file://code-reviewer.md",
+  "tools": ["read"]
+}

@@ -1,7 +1,7 @@
 /** 가족 사진 목록 페이지 (비공개 - 인증 필요) */
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { Suspense, useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,6 +14,23 @@ import type { PostListItem, PaginationMeta } from "@/types";
 const PAGE_SIZE = 12;
 
 export default function FamilyPage() {
+  return (
+    <Suspense fallback={
+      <div className="max-w-6xl mx-auto animate-pulse">
+        <div className="h-7 bg-gray-200 rounded w-32 mb-6" />
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-lg border border-gray-200 shadow-sm p-4 h-48" />
+          ))}
+        </div>
+      </div>
+    }>
+      <FamilyContent />
+    </Suspense>
+  );
+}
+
+function FamilyContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isAuthenticated, isLoading: authLoading } = useAuth();

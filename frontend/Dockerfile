@@ -4,8 +4,8 @@ FROM node:20-alpine AS base
 # 의존성 설치 단계
 FROM base AS deps
 WORKDIR /app
-COPY package.json package-lock.json* ./
-RUN npm ci
+COPY package.json ./
+RUN npm install
 
 # 빌드 단계
 FROM base AS builder

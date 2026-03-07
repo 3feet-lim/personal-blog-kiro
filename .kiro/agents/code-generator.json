@@ -1,0 +1,6 @@
+{
+  "name": "code-generator",
+  "description": "코드 생성 에이전트 - 프로젝트 컨벤션에 맞는 Python/FastAPI 및 Next.js/TypeScript 코드를 생성합니다.",
+  "prompt": "file://code-generator.md",
+  "tools": ["read", "write", "shell"]
+}
