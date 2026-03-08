@@ -1,0 +1,68 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches: [master]
+
+env:
+  # Docker Hub 사용 시: your-dockerhub-username
+  # ECR 사용 시: 123456789012.dkr.ecr.ap-northeast-2.amazonaws.com
+  REGISTRY: ${{ vars.DOCKER_REGISTRY }}
+  BACKEND_IMAGE: ${{ vars.DOCKER_REGISTRY }}/blog-backend
+  FRONTEND_IMAGE: ${{ vars.DOCKER_REGISTRY }}/blog-frontend
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Docker Hub 로그인
+      - name: Login to Docker Hub
+        if: ${{ !contains(vars.DOCKER_REGISTRY, 'ecr') }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # ECR 로그인
+      - name: Configure AWS credentials
+        if: ${{ contains(vars.DOCKER_REGISTRY, 'ecr') }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION || 'ap-northeast-2' }}
+
+      - name: Login to Amazon ECR
+        if: ${{ contains(vars.DOCKER_REGISTRY, 'ecr') }}
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - uses: docker/setup-buildx-action@v3
+
+      # Backend
+      - name: Build and push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            ${{ env.BACKEND_IMAGE }}:latest
+            ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Frontend
+      - name: Build and push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: true
+          tags: |
+            ${{ env.FRONTEND_IMAGE }}:latest
+            ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
