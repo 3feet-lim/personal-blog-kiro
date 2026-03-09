@@ -96,7 +96,15 @@ function FamilyContent() {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-text-primary mb-6">가족 앨범</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-text-primary">가족 앨범</h1>
+        <Link
+          href="/admin/posts/new"
+          className="bg-blue-500 text-white rounded-md px-4 py-2 text-sm hover:bg-blue-600 transition-colors"
+        >
+          새 글 쓰기
+        </Link>
+      </div>
 
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">

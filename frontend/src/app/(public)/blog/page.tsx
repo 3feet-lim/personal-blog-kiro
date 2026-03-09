@@ -3,8 +3,10 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import PostCard from "@/components/posts/PostCard";
 import { getPosts } from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
 import type { PostListItem, PaginationMeta } from "@/types";
 
 /** 페이지당 포스트 수 */
@@ -86,6 +88,9 @@ function Pagination({
 export default function BlogListPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
+
+  const isAdmin = isAuthenticated && user?.role === "admin";
 
   /** URL 쿼리에서 현재 페이지 번호 추출 */
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -129,7 +134,17 @@ export default function BlogListPage() {
 
   return (
     <div className="max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">블로그</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">블로그</h1>
+        {isAdmin && (
+          <Link
+            href="/admin/posts/new"
+            className="bg-blue-500 text-white rounded-md px-4 py-2 text-sm hover:bg-blue-600 transition-colors"
+          >
+            새 글 쓰기
+          </Link>
+        )}
+      </div>
 
       {/* 로딩 상태 */}
       {loading && <PostListSkeleton />}
