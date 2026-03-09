@@ -1,0 +1,6 @@
+{
+  "name": "default",
+  "description": "기본 에이전트 - 한국어로 응답하며 SOLID 원칙 기반으로 개발합니다.",
+  "prompt": "file://default.md",
+  "tools": ["read", "write", "shell"]
+}

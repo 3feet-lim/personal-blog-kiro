@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.posts.models import Post, Visibility
+from app.tags.models import PostTag
 
 
 class PostRepository:
@@ -21,23 +22,31 @@ class PostRepository:
         """새 포스트를 저장합니다."""
         self.db.add(post)
         await self.db.flush()
-        await self.db.refresh(post, attribute_names=["author", "category"])
+        await self.db.refresh(post, attribute_names=["author", "category", "post_tags"])
         return post
 
     async def get_by_id(self, post_id: int) -> Post | None:
-        """ID로 포스트를 조회합니다 (author, category 관계 포함)."""
+        """ID로 포스트를 조회합니다 (author, category, post_tags 관계 포함)."""
         result = await self.db.execute(
             select(Post)
-            .options(selectinload(Post.author), selectinload(Post.category))
+            .options(
+                selectinload(Post.author),
+                selectinload(Post.category),
+                selectinload(Post.post_tags).selectinload(PostTag.tag),
+            )
             .where(Post.id == post_id)
         )
         return result.scalar_one_or_none()
 
     async def get_by_slug(self, slug: str) -> Post | None:
-        """슬러그로 포스트를 조회합니다 (author, category 관계 포함)."""
+        """슬러그로 포스트를 조회합니다 (author, category, post_tags 관계 포함)."""
         result = await self.db.execute(
             select(Post)
-            .options(selectinload(Post.author), selectinload(Post.category))
+            .options(
+                selectinload(Post.author),
+                selectinload(Post.category),
+                selectinload(Post.post_tags).selectinload(PostTag.tag),
+            )
             .where(Post.slug == slug)
         )
         return result.scalar_one_or_none()
@@ -92,7 +101,7 @@ class PostRepository:
     async def update(self, post: Post) -> Post:
         """포스트를 업데이트합니다."""
         await self.db.flush()
-        await self.db.refresh(post, attribute_names=["author", "category"])
+        await self.db.refresh(post, attribute_names=["author", "category", "post_tags"])
         return post
 
     async def delete(self, post: Post) -> None:

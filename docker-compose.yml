@@ -74,7 +74,7 @@ services:
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-blog-images}
       MINIO_USE_SSL: "false"
-      CORS_ORIGINS: '["http://localhost:3000"]'
+      CORS_ORIGINS: '["http://localhost:8888"]'
       DEBUG: ${DEBUG:-false}
     ports:
       - "${BACKEND_PORT:-8000}:8000"
@@ -97,7 +97,7 @@ services:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://backend:8000}
       API_URL: http://backend:8000
     ports:
-      - "${FRONTEND_PORT:-3000}:3000"
+      - "${FRONTEND_PORT:-8888}:3000"
     depends_on:
       - backend
 

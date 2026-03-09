@@ -16,6 +16,7 @@ from app.common.responses import PaginatedResponse
 from app.posts.models import Post, Visibility
 from app.posts.repository import PostRepository
 from app.posts.schemas import PostCreate, PostUpdate
+from app.tags.models import PostTag, Tag
 
 
 def generate_slug(title: str) -> str:
@@ -83,7 +84,9 @@ class PostService:
             author_id=author_id,
             category_id=post_data.category_id,
         )
-        return await self.repo.create(post)
+        post = await self.repo.create(post)
+        await self._sync_tags(post, post_data.tag_ids)
+        return post
 
     async def update_post(self, post_id: int, post_data: PostUpdate) -> Post:
         """포스트를 수정합니다.
@@ -119,6 +122,9 @@ class PostService:
 
         if post_data.category_id is not None:
             post.category_id = post_data.category_id
+
+        if post_data.tag_ids is not None:
+            await self._sync_tags(post, post_data.tag_ids)
 
         return await self.repo.update(post)
 
@@ -193,6 +199,20 @@ class PostService:
         total = await self.repo.count(visibility, category_id)
 
         return paginate(posts, total, page, size)
+
+    async def _sync_tags(self, post: Post, tag_ids: list[int]) -> None:
+        """포스트의 태그를 동기화합니다.
+
+        기존 태그를 모두 제거하고 새 태그 목록으로 교체합니다.
+        """
+        # 기존 태그 관계 제거
+        post.post_tags.clear()
+        await self.db.flush()
+
+        # 새 태그 연결
+        for tag_id in tag_ids:
+            post.post_tags.append(PostTag(post_id=post.id, tag_id=tag_id))
+        await self.db.flush()
 
     async def _ensure_unique_slug(self, base_slug: str) -> str:
         """슬러그의 고유성을 보장합니다.
