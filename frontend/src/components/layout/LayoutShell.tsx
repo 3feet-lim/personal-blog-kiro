@@ -5,6 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
+import { AuthProvider } from "@/hooks/AuthContext";
 
 interface LayoutShellProps {
   children: React.ReactNode;
@@ -43,27 +44,29 @@ export default function LayoutShell({ children }: LayoutShellProps) {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* 헤더 - 상단 고정 */}
-      <Header onToggleSidebar={toggleSidebar} />
+    <AuthProvider>
+      <div className="min-h-screen flex flex-col">
+        {/* 헤더 - 상단 고정 */}
+        <Header onToggleSidebar={toggleSidebar} />
 
-      {/* 사이드바 + 메인 콘텐츠 영역 */}
-      <div className="flex flex-1 relative">
-        <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
+        {/* 사이드바 + 메인 콘텐츠 영역 */}
+        <div className="flex flex-1 relative">
+          <Sidebar isOpen={sidebarOpen} onClose={closeSidebar} />
 
-        {/* 메인 콘텐츠 - 데스크톱에서 사이드바 열림 시 마진으로 공간 확보 */}
-        <main
-          className="flex-1 min-w-0 transition-all duration-300 ease-in-out"
-          style={{
-            marginLeft: isDesktop && sidebarOpen ? "256px" : "0px",
-          }}
-        >
-          <div className="px-4 md:px-8 py-6">{children}</div>
-        </main>
+          {/* 메인 콘텐츠 - 데스크톱에서 사이드바 열림 시 마진으로 공간 확보 */}
+          <main
+            className="flex-1 min-w-0 transition-all duration-300 ease-in-out"
+            style={{
+              marginLeft: isDesktop && sidebarOpen ? "256px" : "0px",
+            }}
+          >
+            <div className="px-4 md:px-8 py-6">{children}</div>
+          </main>
+        </div>
+
+        {/* 푸터 */}
+        <Footer />
       </div>
-
-      {/* 푸터 */}
-      <Footer />
-    </div>
+    </AuthProvider>
   );
 }

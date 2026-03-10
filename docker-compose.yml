@@ -74,6 +74,9 @@ services:
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY:-minioadmin}
       MINIO_BUCKET_NAME: ${MINIO_BUCKET_NAME:-blog-images}
       MINIO_USE_SSL: "false"
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@blog.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-changeme}
+      ADMIN_NAME: ${ADMIN_NAME:-Admin}
       CORS_ORIGINS: '["http://localhost:8888"]'
       DEBUG: ${DEBUG:-false}
     ports:

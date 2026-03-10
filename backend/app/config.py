@@ -38,6 +38,11 @@ class Settings(BaseSettings):
     thumbnail_width: int = 300
     thumbnail_height: int = 300
 
+    # 초기 관리자 계정 설정
+    admin_email: str = "admin@blog.com"
+    admin_password: str = "changeme"
+    admin_name: str = "Admin"
+
     # CORS 설정
     cors_origins: list[str] = ["http://localhost:3000"]
 
